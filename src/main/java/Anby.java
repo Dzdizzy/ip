@@ -17,7 +17,7 @@ public class Anby {
         String end = "Alright see you. Don't forget my burgers okay";
         String greet = banner + line + intro;
 
-        String[] tasks = new String[100];
+        Task[] tasks = new Task[100];
         int count = 0;
 
         Scanner scanner = new Scanner(System.in);
@@ -26,13 +26,41 @@ public class Anby {
 
         while (true) {
             String input = scanner.nextLine();
+            String[] parts = input.split(" ");
 
             if (input.equalsIgnoreCase("list")) {
-                System.out.println(line);
+                if (count == 0) {
+                    System.out.println("lol you have no tasks!");
+                } else {
+                    System.out.println(line + "finish these and then reward me with burgers:\n");
+                }
+
                 for (int i = 0; i < count; i++) {
                     System.out.println((i + 1) + ". " + tasks[i]);
                 }
                 System.out.println(line);
+                continue;
+            }
+
+            if (parts[0].equalsIgnoreCase("mark")) {
+                if (parts.length < 2 || !isValidTaskNumber(parts[1], count)) {
+                    System.out.println(line + "hey give me a valid task number to mark!.\n" + line);
+                    continue;
+                }
+                int id = Integer.parseInt(parts[1]) - 1;
+                tasks[id].markAsDone();
+                System.out.println(line + "ooo you're done with this! that'll be one burger please:\n" + tasks[id] + "\n" + line);
+                continue;
+            }
+
+            if (parts[0].equalsIgnoreCase("unmark")) {
+                if (parts.length < 2 || !isValidTaskNumber(parts[1], count)) {
+                    System.out.println(line + "hey give me a valid task number to unmark!\n" + line);
+                    continue;
+                }
+                int id = Integer.parseInt(parts[1]) - 1;
+                tasks[id].unmarkAsDone();
+                System.out.println(line + "hey why didn't you do this already?\n" + tasks[id] + "\n" + line);
                 continue;
             }
 
@@ -41,9 +69,18 @@ public class Anby {
                 break;
             }
 
-            tasks[count] = input;
+            tasks[count] = new Task(input);
             count++;
             System.out.println(line + "added: " + input + "\n" + line);
+        }
+    }
+
+    private static boolean isValidTaskNumber(String text, int taskCount) {
+        try {
+            int taskNumber = Integer.parseInt(text);
+            return taskNumber >= 1 && taskNumber <= taskCount;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 }
