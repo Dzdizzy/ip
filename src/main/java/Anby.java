@@ -17,6 +17,9 @@ public class Anby {
         String end = "Alright see you. Don't forget my burgers okay";
         String greet = banner + line + intro;
 
+        String[] tasks = new String[100];
+        int count = 0;
+
         Scanner scanner = new Scanner(System.in);
 
         System.out.println(greet);
@@ -24,12 +27,23 @@ public class Anby {
         while (true) {
             String input = scanner.nextLine();
 
-            if (input.equalsIgnoreCase("Bye")){
+            if (input.equalsIgnoreCase("list")) {
+                System.out.println(line);
+                for (int i = 0; i < count; i++) {
+                    System.out.println((i + 1) + ". " + tasks[i]);
+                }
+                System.out.println(line);
+                continue;
+            }
+
+            if (input.equalsIgnoreCase("bye")) {
                 System.out.println(end);
                 break;
             }
 
-            System.out.println(input);
+            tasks[count] = input;
+            count++;
+            System.out.println(line + "added: " + input + "\n" + line);
         }
     }
 }
