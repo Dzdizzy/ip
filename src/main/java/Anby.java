@@ -26,7 +26,7 @@ public class Anby {
 
         while (true) {
             String input = scanner.nextLine();
-            String[] parts = input.split(" ");
+            String[] parts = input.split(" ", 2);
 
             if (input.equalsIgnoreCase("list")) {
                 if (count == 0) {
@@ -69,9 +69,59 @@ public class Anby {
                 break;
             }
 
-            tasks[count] = new Task(input);
+            if (parts[0].equalsIgnoreCase("todo")) {
+                if (parts.length == 1) {
+                    System.out.println("hey you forgot to put a todo haha");
+                    continue;
+                }
+                else {
+                    tasks[count] = new Todo(parts[1]);
+                }
+            }
+
+            if (parts[0].equalsIgnoreCase("deadline")) {
+                if (parts.length == 1) {
+                    System.out.println("hey you forgot to put a deadline task haha");
+                    continue;
+                }
+                else {
+                    String[] parts1 = parts[1].split("/by", 2);
+                    if (parts1.length != 2) {
+                        System.out.println("hey you forgot to put a deadline on the task");
+                        continue;
+                    }
+                    else {
+                        tasks[count] = new Deadline(parts1[0].trim(), parts1[1].trim());
+                    }
+                }
+            }
+
+            if (parts[0].equalsIgnoreCase("event")) {
+                if (parts.length == 1) {
+                    System.out.println("hey you forgot to put an event haha");
+                    continue;
+                }
+                else {
+                    String[] parts1 = parts[1].split("/from", 2);
+                    if (parts1.length != 2) {
+                        System.out.println("hey you forgot to put a start time");
+                        continue;
+                    }
+                    else {
+                        String[] parts2 =  parts1[1].split("/to", 2);
+                        if (parts2.length != 2) {
+                            System.out.println("hey you forgot to put an end time");
+                            continue;
+                        }
+                        else {
+                            tasks[count] = new Event(parts1[0].trim(), parts2[0].trim(), parts2[1].trim());
+                        }
+                    }
+                }
+            }
+
+            System.out.println(line + "okay, this is a new task: " + tasks[count].toString() + "\nyou've got " + (count + 1) + " tasks waiting for you...\n" + line);
             count++;
-            System.out.println(line + "added: " + input + "\n" + line);
         }
     }
 
