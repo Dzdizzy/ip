@@ -28,6 +28,7 @@ public class Anby {
             String input = scanner.nextLine();
             String[] parts = input.split(" ", 2);
 
+            try {
             if (input.equalsIgnoreCase("list")) { // list task
                 if (count == 0) {
                     System.out.println("lol you have no tasks!");
@@ -44,13 +45,11 @@ public class Anby {
 
             if (parts[0].equalsIgnoreCase("mark")) { // mark task
                 if (parts.length < 2 || !isValidTaskNumber(parts[1], count)) {
-                    System.out.println(line + "hey give me a valid task number to mark!\n" + line);
-                    continue;
+                    throw new AnbyException("hey give me a valid task number to mark!");
                 }
                 int id = Integer.parseInt(parts[1]) - 1;
                 if (tasks[id].isDone()) {
-                    System.out.println("you're actually already done with this task lol\n");
-                    continue;
+                    throw new AnbyException("you're actually already done with this task lol");
                 }
                 tasks[id].markAsDone();
                 System.out.println(line + "ooo you're done with this! that'll be one burger please:\n" + tasks[id] + "\n" + line);
@@ -59,13 +58,11 @@ public class Anby {
 
             if (parts[0].equalsIgnoreCase("unmark")) { // unmark task
                 if (parts.length < 2 || !isValidTaskNumber(parts[1], count)) {
-                    System.out.println(line + "hey give me a valid task number to unmark!\n" + line);
-                    continue;
+                    throw new AnbyException("hey give me a valid task number to unmark!");
                 }
                 int id = Integer.parseInt(parts[1]) - 1;
                 if (!tasks[id].isDone()) {
-                    System.out.println("bruh you haven't done this yet anyway\n");
-                    continue;
+                    throw new AnbyException("bruh you haven't done this yet anyway");
                 }
                 tasks[id].unmarkAsDone();
                 System.out.println(line + "hey why didn't you do this already?\n" + tasks[id] + "\n" + line);
@@ -79,8 +76,7 @@ public class Anby {
 
             if (parts[0].equalsIgnoreCase("todo")) { // create to do task
                 if (parts.length == 1) {
-                    System.out.println("hey you forgot to put a todo haha");
-                    continue;
+                    throw new AnbyException("hey you forgot to put a todo haha");
                 }
                 else {
                     tasks[count] = new Todo(parts[1]);
@@ -98,8 +94,7 @@ public class Anby {
                 else {
                     String[] parts1 = parts[1].split("/by", 2);
                     if (parts1.length != 2) {
-                        System.out.println("hey you forgot to put a deadline on the task\n(do deadline /by [time])\n");
-                        continue;
+                        throw new AnbyException("hey you forgot to put a deadline on the task\n(do deadline /by [time])");
                     }
                     else {
                         tasks[count] = new Deadline(parts1[0].trim(), parts1[1].trim());
@@ -118,14 +113,12 @@ public class Anby {
                 else {
                     String[] parts1 = parts[1].split("/from", 2);
                     if (parts1.length != 2) {
-                        System.out.println("hey you forgot to put a start time\n(do event /from [time] /to [time])\n");
-                        continue;
+                        throw new AnbyException("hey you forgot to put a start time\n(do event /from [time] /to [time])");
                     }
                     else {
                         String[] parts2 =  parts1[1].split("/to", 2);
                         if (parts2.length != 2) {
-                            System.out.println("hey you forgot to put an end time\n(do event /from [time] /to [time])\n");
-                            continue;
+                            throw new AnbyException("hey you forgot to put an end time\n(do event /from [time] /to [time])");
                         }
                         else {
                             tasks[count] = new Event(parts1[0].trim(), parts2[0].trim(), parts2[1].trim());
@@ -136,7 +129,10 @@ public class Anby {
                     }
                 }
             }
-            System.out.println("what are ya tryna say?"); // unrecognised command / gibberish
+            throw new AnbyException("what are ya tryna say?"); // unrecognised command / gibberish
+            } catch (AnbyException e) {
+                System.out.println(line + e.getMessage() + "\n" + line);
+            }
         }
     }
 
