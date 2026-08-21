@@ -28,7 +28,7 @@ public class Anby {
             String input = scanner.nextLine();
             String[] parts = input.split(" ", 2);
 
-            if (input.equalsIgnoreCase("list")) {
+            if (input.equalsIgnoreCase("list")) { // list task
                 if (count == 0) {
                     System.out.println("lol you have no tasks!");
                 } else {
@@ -42,44 +42,55 @@ public class Anby {
                 continue;
             }
 
-            if (parts[0].equalsIgnoreCase("mark")) {
+            if (parts[0].equalsIgnoreCase("mark")) { // mark task
                 if (parts.length < 2 || !isValidTaskNumber(parts[1], count)) {
-                    System.out.println(line + "hey give me a valid task number to mark!.\n" + line);
+                    System.out.println(line + "hey give me a valid task number to mark!\n" + line);
                     continue;
                 }
                 int id = Integer.parseInt(parts[1]) - 1;
+                if (tasks[id].isDone()) {
+                    System.out.println("you're actually already done with this task lol\n");
+                    continue;
+                }
                 tasks[id].markAsDone();
                 System.out.println(line + "ooo you're done with this! that'll be one burger please:\n" + tasks[id] + "\n" + line);
                 continue;
             }
 
-            if (parts[0].equalsIgnoreCase("unmark")) {
+            if (parts[0].equalsIgnoreCase("unmark")) { // unmark task
                 if (parts.length < 2 || !isValidTaskNumber(parts[1], count)) {
                     System.out.println(line + "hey give me a valid task number to unmark!\n" + line);
                     continue;
                 }
                 int id = Integer.parseInt(parts[1]) - 1;
+                if (!tasks[id].isDone()) {
+                    System.out.println("bruh you haven't done this yet anyway\n");
+                    continue;
+                }
                 tasks[id].unmarkAsDone();
                 System.out.println(line + "hey why didn't you do this already?\n" + tasks[id] + "\n" + line);
                 continue;
             }
 
-            if (input.equalsIgnoreCase("bye")) {
+            if (input.equalsIgnoreCase("bye")) { // exit chatbot
                 System.out.println(end);
                 break;
             }
 
-            if (parts[0].equalsIgnoreCase("todo")) {
+            if (parts[0].equalsIgnoreCase("todo")) { // create to do task
                 if (parts.length == 1) {
                     System.out.println("hey you forgot to put a todo haha");
                     continue;
                 }
                 else {
                     tasks[count] = new Todo(parts[1]);
+                    System.out.println(line + "okay, this is a new task: " + tasks[count].toString() + "\nyou've got " + (count + 1) + " task(s) waiting for you...\n" + line);
+                    count++;
+                    continue;
                 }
             }
 
-            if (parts[0].equalsIgnoreCase("deadline")) {
+            if (parts[0].equalsIgnoreCase("deadline")) { // create a deadline task
                 if (parts.length == 1) {
                     System.out.println("hey you forgot to put a deadline task haha");
                     continue;
@@ -87,16 +98,19 @@ public class Anby {
                 else {
                     String[] parts1 = parts[1].split("/by", 2);
                     if (parts1.length != 2) {
-                        System.out.println("hey you forgot to put a deadline on the task");
+                        System.out.println("hey you forgot to put a deadline on the task\n(do deadline /by [time])\n");
                         continue;
                     }
                     else {
                         tasks[count] = new Deadline(parts1[0].trim(), parts1[1].trim());
+                        System.out.println(line + "okay, this is a new task: " + tasks[count].toString() + "\nyou've got " + (count + 1) + " task(s) waiting for you...\n" + line);
+                        count++;
+                        continue;
                     }
                 }
             }
 
-            if (parts[0].equalsIgnoreCase("event")) {
+            if (parts[0].equalsIgnoreCase("event")) { // create an event task
                 if (parts.length == 1) {
                     System.out.println("hey you forgot to put an event haha");
                     continue;
@@ -104,28 +118,29 @@ public class Anby {
                 else {
                     String[] parts1 = parts[1].split("/from", 2);
                     if (parts1.length != 2) {
-                        System.out.println("hey you forgot to put a start time");
+                        System.out.println("hey you forgot to put a start time\n(do event /from [time] /to [time])\n");
                         continue;
                     }
                     else {
                         String[] parts2 =  parts1[1].split("/to", 2);
                         if (parts2.length != 2) {
-                            System.out.println("hey you forgot to put an end time");
+                            System.out.println("hey you forgot to put an end time\n(do event /from [time] /to [time])\n");
                             continue;
                         }
                         else {
                             tasks[count] = new Event(parts1[0].trim(), parts2[0].trim(), parts2[1].trim());
+                            System.out.println(line + "okay, this is a new task: " + tasks[count].toString() + "\nyou've got " + (count + 1) + " task(s) waiting for you...\n" + line);
+                            count++;
+                            continue;
                         }
                     }
                 }
             }
-
-            System.out.println(line + "okay, this is a new task: " + tasks[count].toString() + "\nyou've got " + (count + 1) + " tasks waiting for you...\n" + line);
-            count++;
+            System.out.println("what are ya tryna say?"); // unrecognised command / gibberish
         }
     }
 
-    private static boolean isValidTaskNumber(String text, int taskCount) {
+    private static boolean isValidTaskNumber(String text, int taskCount) { // checks for valid number when marking/unmarking tasks
         try {
             int taskNumber = Integer.parseInt(text);
             return taskNumber >= 1 && taskNumber <= taskCount;
