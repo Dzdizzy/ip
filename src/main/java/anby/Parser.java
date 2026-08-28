@@ -1,3 +1,5 @@
+package anby;
+
 public class Parser {
     public String[] splitInput(String input) {
         return input.split(" ", 2);
