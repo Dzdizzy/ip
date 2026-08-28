@@ -1,9 +1,10 @@
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Anby {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String banner = "    ___          __         \n"
                 + "   /   |  ____  / /_  __  __\n"
                 + "  / /| | / __ \\/ __ \\/ / / /\n"
@@ -26,7 +27,7 @@ public class Anby {
 
         Random random = new Random();
 
-        ArrayList<Task> tasks = new ArrayList<>();
+        ArrayList<Task> tasks = Storage.loadTasks();
 
         Scanner scanner = new Scanner(System.in);
 
@@ -68,6 +69,7 @@ public class Anby {
                             throw new AnbyException("you're actually already done with this task lol");
                         }
                         currTask.markAsDone();
+                        Storage.saveTasks(tasks);
                         System.out.println(line + "ooo you're done with this! that'll be one burger please:\n" + currTask + "\n" + line);
                         break;
                     }
@@ -81,6 +83,7 @@ public class Anby {
                             throw new AnbyException("bruh you haven't done this yet anyway");
                         }
                         currTask.unmarkAsDone();
+                        Storage.saveTasks(tasks);
                         System.out.println(line + "hey why didn't you do this already?\n" + currTask + "\n" + line);
                         break;
                     }
@@ -91,6 +94,7 @@ public class Anby {
                         int id = Integer.parseInt(parts[1]) - 1;
                         Task removedTask = tasks.get(id);
                         tasks.remove(id);
+                        Storage.saveTasks(tasks);
                         System.out.println(line + "okay i've taken away this task for you:\n" + removedTask + "\n" + line);
                         break;
                     }
@@ -105,6 +109,7 @@ public class Anby {
                         else {
                             Todo newTodo = new Todo(parts[1]);
                             tasks.add(newTodo);
+                            Storage.saveTasks(tasks);
                             System.out.println(line + "okay, this is a new task: " + newTodo + "\nyou've got " + tasks.size() + " task(s) waiting for you...\n" + line);
                             break;
                         }
@@ -121,6 +126,7 @@ public class Anby {
                             else {
                                 Deadline newDeadline = new Deadline(parts1[0].trim(), parts1[1].trim());
                                 tasks.add(newDeadline);
+                                Storage.saveTasks(tasks);
                                 System.out.println(line + "okay, this is a new task: " + newDeadline + "\nyou've got " + tasks.size() + " task(s) waiting for you...\n" + line);
                                 break;
                             }
@@ -143,6 +149,7 @@ public class Anby {
                                 else {
                                     Event newEvent = new Event(parts1[0].trim(), parts2[0].trim(), parts2[1].trim());
                                     tasks.add(newEvent);
+                                    Storage.saveTasks(tasks);
                                     System.out.println(line + "okay, this is a new task: " + newEvent + "\nyou've got " + tasks.size() + " task(s) waiting for you...\n" + line);
                                     break;
                                 }

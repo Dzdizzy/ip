@@ -19,6 +19,18 @@ public class Task {
         return this.isDone;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public int isDoneBinary() {
+        return this.isDone ? 1 : 0;
+    }
+
+    public String toFileString() {
+        return this.isDoneBinary() + " | " + this.getName();
+    }
+
     @Override
     public String toString() {
         if (this.isDone) {
