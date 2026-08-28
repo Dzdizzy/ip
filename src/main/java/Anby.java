@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Random;
@@ -124,10 +125,14 @@ public class Anby {
                                 throw new AnbyException("hey you forgot to put a deadline on the task\n(do deadline /by [time])");
                             }
                             else {
-                                Deadline newDeadline = new Deadline(parts1[0].trim(), parts1[1].trim());
-                                tasks.add(newDeadline);
-                                Storage.saveTasks(tasks);
-                                System.out.println(line + "okay, this is a new task: " + newDeadline + "\nyou've got " + tasks.size() + " task(s) waiting for you...\n" + line);
+                                try {
+                                    Deadline newDeadline = new Deadline(parts1[0].trim(), parts1[1].trim());
+                                    tasks.add(newDeadline);
+                                    Storage.saveTasks(tasks);
+                                    System.out.println(line + "okay, this is a new task: " + newDeadline + "\nyou've got " + tasks.size() + " task(s) waiting for you...\n" + line);
+                                } catch (DateTimeParseException e) {
+                                    throw new AnbyException("yo use this date format for the deadline: yyyy-mm-dd");
+                                }
                                 break;
                             }
                         }
@@ -147,10 +152,16 @@ public class Anby {
                                     throw new AnbyException("hey you forgot to put an end time\n(do event /from [time] /to [time])");
                                 }
                                 else {
-                                    Event newEvent = new Event(parts1[0].trim(), parts2[0].trim(), parts2[1].trim());
-                                    tasks.add(newEvent);
-                                    Storage.saveTasks(tasks);
-                                    System.out.println(line + "okay, this is a new task: " + newEvent + "\nyou've got " + tasks.size() + " task(s) waiting for you...\n" + line);
+                                    try {
+                                        Event newEvent = new Event(parts1[0].trim(), parts2[0].trim(), parts2[1].trim());
+                                        tasks.add(newEvent);
+                                        Storage.saveTasks(tasks);
+                                        System.out.println(line + "okay, this is a new task: " + newEvent + "\nyou've got " + tasks.size() + " task(s) waiting for you...\n" + line);
+                                    } catch (DateTimeParseException e) {
+                                        throw new AnbyException("yo use this date format for the event timings: yyyy-mm-dd");
+                                    } catch (IllegalArgumentException e) {
+                                        throw new AnbyException("bruh your end date is before the start date");
+                                    }
                                     break;
                                 }
                             }
