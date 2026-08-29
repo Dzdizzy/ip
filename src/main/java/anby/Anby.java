@@ -10,7 +10,19 @@ import java.time.format.DateTimeParseException;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * Entry point for the Anby chatbot.
+ */
 public class Anby {
+    private Anby() {
+    }
+
+    /**
+     * Starts the Anby chatbot and handles user commands until the user exits.
+     *
+     * @param args command line arguments supplied to the program
+     * @throws IOException if task data cannot be saved
+     */
     public static void main(String[] args) throws IOException {
         String[] badInput = {
                 "what are ya tryna say?",

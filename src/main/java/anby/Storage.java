@@ -12,9 +12,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Handles loading and saving tasks from persistent storage.
+ */
 public class Storage {
     private static final String FILE_PATH = "data/anby.txt";
 
+    private Storage() {
+    }
+
+    /**
+     * Loads saved tasks from the task data file.
+     *
+     * @return tasks loaded from disk, or an empty list if the file does not exist
+     */
     public static ArrayList<Task> loadTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = new File(FILE_PATH);
@@ -64,6 +75,12 @@ public class Storage {
         return task;
     }
 
+    /**
+     * Saves the given tasks to the task data file.
+     *
+     * @param tasks tasks to save
+     * @throws IOException if the task data file cannot be written
+     */
     public static void saveTasks(ArrayList<Task> tasks) throws IOException {
         File file = new File(FILE_PATH);
         file.getParentFile().mkdirs();
