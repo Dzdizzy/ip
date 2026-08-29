@@ -11,7 +11,7 @@ public class ParserTest {
         Parser parser = new Parser();
         String[] parts = parser.splitInput("event eat burgers for 3 meals /from 2010-01-01 /to 2026-08-28");
 
-        assertArrayEquals(new String[] {"eat burgers for 3 meals ", " 2010-01-01 ", " 2026-08-28"},
+        assertArrayEquals(new String[] {"eat burgers for 3 meals", "2010-01-01", "2026-08-28"},
                 parser.parseEvent(parts));
     }
 
