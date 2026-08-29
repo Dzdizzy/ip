@@ -48,6 +48,21 @@ public class Parser {
     }
 
     /**
+     * Returns the keyword for a find command.
+     *
+     * @param parts find input split into command word and arguments
+     * @return keyword
+     * @throws AnbyException if the keyword is missing
+     */
+    public String parseFind(String[] parts) throws AnbyException {
+        if (parts.length == 1 || parts[1].trim().isEmpty()) {
+            throw new AnbyException("hey you didnt put in anything to find");
+        }
+
+        return parts[1].trim();
+    }
+
+    /**
      * Returns the description for a todo command.
      *
      * @param parts todo input split into command word and arguments
@@ -55,11 +70,11 @@ public class Parser {
      * @throws AnbyException if the description is missing
      */
     public String parseTodo(String[] parts) throws AnbyException {
-        if (parts.length == 1) {
+        if (parts.length == 1 || parts[1].trim().isEmpty()) {
             throw new AnbyException("hey you forgot to put a todo haha");
         }
 
-        return parts[1];
+        return parts[1].trim();
     }
 
     /**
@@ -80,7 +95,10 @@ public class Parser {
             throw new AnbyException("hey you forgot to put a deadline on the task\n(do deadline /by [time])");
         }
 
-        return deadlineParts;
+        return new String[] {
+                deadlineParts[0].trim(),
+                deadlineParts[1].trim()
+        };
     }
 
     /**
@@ -108,9 +126,9 @@ public class Parser {
         }
 
         return new String[] {
-                eventParts[0],
-                timeParts[0],
-                timeParts[1]
+                eventParts[0].trim(),
+                timeParts[0].trim(),
+                timeParts[1].trim()
         };
     }
 }

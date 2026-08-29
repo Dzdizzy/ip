@@ -19,5 +19,7 @@ public enum Command {
     /** Adds a deadline task. */
     DEADLINE,
     /** Adds an event task. */
-    EVENT
+    EVENT,
+    /** Finds and shows tasks that contains the searched keyword. */
+    FIND
 }

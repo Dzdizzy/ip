@@ -80,6 +80,12 @@ public class Anby {
                         ui.showDeleted(removedTask);
                         break;
                     }
+                    case FIND: {
+                        String keyword = parser.parseFind(parts);
+                        TaskList matchingTasks = tasks.find(keyword);
+                        ui.showFindResults(matchingTasks);
+                        break;
+                    }
                     case BYE: {
                         ui.showGoodbye();
                         return;
@@ -95,7 +101,7 @@ public class Anby {
                         String[] deadlineParts = parser.parseDeadline(parts);
 
                         try {
-                            Deadline newDeadline = new Deadline(deadlineParts[0].trim(), deadlineParts[1].trim());
+                            Deadline newDeadline = new Deadline(deadlineParts[0], deadlineParts[1]);
                             tasks.add(newDeadline);
                             Storage.saveTasks(tasks.getTasks());
                             ui.showAdded(newDeadline, tasks.size());
@@ -109,8 +115,7 @@ public class Anby {
                         String[] eventParts = parser.parseEvent(parts);
 
                         try {
-                            Event newEvent = new Event(eventParts[0].trim(), eventParts[1].trim(),
-                                    eventParts[2].trim());
+                            Event newEvent = new Event(eventParts[0], eventParts[1], eventParts[2]);
                             tasks.add(newEvent);
                             Storage.saveTasks(tasks.getTasks());
                             ui.showAdded(newEvent, tasks.size());

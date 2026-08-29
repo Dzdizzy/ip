@@ -44,7 +44,7 @@ public class Ui {
      */
     public void showList(TaskList tasks) {
         if (tasks.isEmpty()) {
-            System.out.println("lol you have no tasks!");
+            System.out.println(LINE + "lol you have no tasks!\n");
         } else {
             System.out.println(LINE + "finish these and then reward me with burgers:\n");
         }
@@ -92,6 +92,25 @@ public class Ui {
     public void showAdded(Task task, int taskCount) {
         System.out.println(LINE + "okay, this is a new task: " + task
                 + "\nyou've got " + taskCount + " task(s) waiting for you...\n" + LINE);
+    }
+
+    /**
+     * Shows all tasks in the task list that matches with the searched keyword.
+     *
+     * @param matchingTasks list of tasks that match the searched keyword.
+     */
+    public void showFindResults(TaskList matchingTasks) {
+        if (matchingTasks.isEmpty()) {
+            System.out.println(LINE + "oopsie i cant find anything\n");
+        } else {
+            System.out.println(LINE + "heres what i found:\n");
+        }
+
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            System.out.println((i + 1) + ". " + matchingTasks.get(i));
+        }
+
+        System.out.println(LINE);
     }
 
     /**

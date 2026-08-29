@@ -121,6 +121,18 @@ public class TaskList {
         task.unmarkAsDone();
     }
 
+    public TaskList find(String keyword) {
+        ArrayList<Task> matchingTasks = new ArrayList<>();
+
+        for (int i = 0; i < this.tasks.size(); i++) {
+            if (this.tasks.get(i).getName().toUpperCase().contains(keyword.toUpperCase())) {
+                matchingTasks.add(this.tasks.get(i));
+            }
+        }
+
+        return new TaskList(matchingTasks);
+    }
+
     private int parseTaskIndex(String text) throws AnbyException {
         try {
             int taskNumber = Integer.parseInt(text);
