@@ -48,13 +48,13 @@ public class Task {
     public String getName() {
         return this.name;
     }
-
+    
     /**
      * Returns the done state in the storage format.
      *
      * @return 1 if this task is done, otherwise 0
      */
-    public int isDoneBinary() {
+    public int getDoneStatusAsInt() {
         return this.isDone ? 1 : 0;
     }
 
@@ -64,7 +64,7 @@ public class Task {
      * @return file storage representation of this task
      */
     public String toFileString() {
-        return this.isDoneBinary() + " | " + this.getName();
+        return this.getDoneStatusAsInt() + " | " + this.getName();
     }
 
     /**

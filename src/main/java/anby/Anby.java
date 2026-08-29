@@ -24,7 +24,7 @@ public class Anby {
      * @throws IOException if task data cannot be saved
      */
     public static void main(String[] args) throws IOException {
-        String[] badInput = {
+        String[] badInputMessages = {
                 "what are ya tryna say?",
                 "burger?",
                 "please speak burger or english only"
@@ -48,8 +48,8 @@ public class Anby {
                 Command command;
                 try {
                     command = parser.parseCommand(parts[0]);
-                } catch (IllegalArgumentException e) { // catch illegal or unrecognised command
-                    throw new AnbyException(badInput[random.nextInt(badInput.length)]);
+                } catch (IllegalArgumentException e) { // catch illegal or unrecognized command
+                    throw new AnbyException(badInputMessages[random.nextInt(badInputMessages.length)]);
                 }
 
                 switch (command) {

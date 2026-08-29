@@ -55,17 +55,17 @@ public class Storage {
         Task task;
 
         switch (parts[0]) {
-        case "T":
-            task = new Todo(parts[2]);
-            break;
-        case "D":
-            task = new Deadline(parts[2], parts[3]);
-            break;
-        case "E":
-            task = new Event(parts[2], parts[3], parts[4]);
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown task type: " + parts[0]);
+            case "T":
+                task = new Todo(parts[2]);
+                break;
+            case "D":
+                task = new Deadline(parts[2], parts[3]);
+                break;
+            case "E":
+                task = new Event(parts[2], parts[3], parts[4]);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown task type: " + parts[0]);
         }
 
         if (parts[1].equals("1")) {
@@ -85,12 +85,12 @@ public class Storage {
         File file = new File(FILE_PATH);
         file.getParentFile().mkdirs();
 
-        FileWriter fw = new FileWriter(file);
+        FileWriter fileWriter = new FileWriter(file);
 
         for (int i = 0; i < tasks.size(); i++) {
-            fw.write(tasks.get(i).toFileString() + System.lineSeparator());
+            fileWriter.write(tasks.get(i).toFileString() + System.lineSeparator());
         }
 
-        fw.close();
+        fileWriter.close();
     }
 }
