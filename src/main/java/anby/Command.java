@@ -1,5 +1,23 @@
 package anby;
 
+/**
+ * Commands supported by Anby.
+ */
 public enum Command {
-    LIST, MARK, UNMARK, DELETE, BYE, TODO, DEADLINE, EVENT
+    /** Shows all tasks. */
+    LIST,
+    /** Marks a task as done. */
+    MARK,
+    /** Marks a task as not done. */
+    UNMARK,
+    /** Deletes a task. */
+    DELETE,
+    /** Exits Anby. */
+    BYE,
+    /** Adds a todo task. */
+    TODO,
+    /** Adds a deadline task. */
+    DEADLINE,
+    /** Adds an event task. */
+    EVENT
 }

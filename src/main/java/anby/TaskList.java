@@ -4,43 +4,97 @@ import anby.task.Task;
 
 import java.util.ArrayList;
 
+/**
+ * Stores and manages the user's tasks.
+ */
 public class TaskList {
     private ArrayList<Task> tasks;
 
+    /**
+     * Creates a task list backed by the given tasks.
+     *
+     * @param tasks initial tasks in the list
+     */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
     }
 
+    /**
+     * Checks whether there are no tasks in the list.
+     *
+     * @return true if the task list is empty
+     */
     public boolean isEmpty() {
         return this.tasks.isEmpty();
     }
 
+    /**
+     * Returns the number of tasks in the list.
+     *
+     * @return number of tasks
+     */
     public int size() {
         return this.tasks.size();
     }
 
+    /**
+     * Returns all tasks in the list.
+     *
+     * @return backing list of tasks
+     */
     public ArrayList<Task> getTasks() {
         return this.tasks;
     }
 
+    /**
+     * Returns the task at the given zero-based index.
+     *
+     * @param index zero-based index of the task
+     * @return task at the given index
+     */
     public Task get(int index) {
         return this.tasks.get(index);
     }
 
+    /**
+     * Returns the task for a one-based task number.
+     *
+     * @param taskNumber one-based task number as text
+     * @return task with the given task number
+     * @throws AnbyException if the task number is invalid
+     */
     public Task getTask(String taskNumber) throws AnbyException {
         int index = parseTaskIndex(taskNumber);
         return this.tasks.get(index);
     }
 
+    /**
+     * Adds a task to the list.
+     *
+     * @param task task to add
+     */
     public void add(Task task) {
         this.tasks.add(task);
     }
 
+    /**
+     * Deletes the task for a one-based task number.
+     *
+     * @param taskNumber one-based task number as text
+     * @return deleted task
+     * @throws AnbyException if the task number is invalid
+     */
     public Task delete(String taskNumber) throws AnbyException {
         int index = parseTaskIndex(taskNumber);
         return this.tasks.remove(index);
     }
 
+    /**
+     * Marks the task for a one-based task number as done.
+     *
+     * @param taskNumber one-based task number as text
+     * @throws AnbyException if the task number is invalid or the task is already done
+     */
     public void mark(String taskNumber) throws AnbyException {
         Task task = getTask(taskNumber);
 
@@ -51,6 +105,12 @@ public class TaskList {
         task.markAsDone();
     }
 
+    /**
+     * Marks the task for a one-based task number as not done.
+     *
+     * @param taskNumber one-based task number as text
+     * @throws AnbyException if the task number is invalid or the task is not done
+     */
     public void unmark(String taskNumber) throws AnbyException {
         Task task = getTask(taskNumber);
 
