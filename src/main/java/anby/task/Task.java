@@ -25,12 +25,12 @@ public class Task {
         return this.name;
     }
 
-    public int isDoneBinary() {
+    public int getDoneStatusAsInt() {
         return this.isDone ? 1 : 0;
     }
 
     public String toFileString() {
-        return this.isDoneBinary() + " | " + this.getName();
+        return this.getDoneStatusAsInt() + " | " + this.getName();
     }
 
     @Override
