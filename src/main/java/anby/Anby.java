@@ -1,14 +1,14 @@
 package anby;
 
-import anby.task.Deadline;
-import anby.task.Event;
-import anby.task.Task;
-import anby.task.Todo;
-
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 import java.util.Random;
 import java.util.Scanner;
+
+import anby.task.Deadline;
+import anby.task.Event;
+import anby.task.Task;
+import anby.task.Todo;
 
 /**
  * Entry point for the Anby chatbot.
@@ -25,9 +25,9 @@ public class Anby {
      */
     public static void main(String[] args) throws IOException {
         String[] badInputMessages = {
-                "what are ya tryna say?",
-                "burger?",
-                "please speak burger or english only"
+            "what are ya tryna say?",
+            "burger?",
+            "please speak burger or english only"
         };
 
         Random random = new Random();
@@ -127,6 +127,8 @@ public class Anby {
 
                         break;
                     }
+                    default:
+                        throw new AnbyException(badInputMessages[random.nextInt(badInputMessages.length)]);
                 }
             } catch (AnbyException e) {
                 ui.showError(e.getMessage());

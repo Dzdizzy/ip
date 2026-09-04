@@ -48,7 +48,7 @@ public class Task {
     public String getName() {
         return this.name;
     }
-    
+
     /**
      * Returns the done state in the storage format.
      *

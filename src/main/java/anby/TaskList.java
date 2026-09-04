@@ -1,8 +1,8 @@
 package anby;
 
-import anby.task.Task;
-
 import java.util.ArrayList;
+
+import anby.task.Task;
 
 /**
  * Stores and manages the user's tasks.
@@ -121,6 +121,12 @@ public class TaskList {
         task.unmarkAsDone();
     }
 
+    /**
+     * Returns all tasks whose names contain the given keyword.
+     *
+     * @param keyword keyword to search for
+     * @return task list containing matching tasks
+     */
     public TaskList find(String keyword) {
         ArrayList<Task> matchingTasks = new ArrayList<>();
 
