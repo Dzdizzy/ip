@@ -14,7 +14,27 @@ import anby.task.Todo;
  * Entry point for the Anby chatbot.
  */
 public class Anby {
-    private Anby() {
+    private static final String[] BAD_INPUT_MESSAGES = {
+        "what are ya tryna say?",
+        "burger?",
+        "please speak burger or english only"
+    };
+
+    private final Parser parser;
+    private final Random random;
+    private final TaskList tasks;
+    private final Ui ui;
+    private boolean isExit;
+
+    /**
+     * Creates the Anby chatbot.
+     */
+    public Anby() {
+        parser = new Parser();
+        random = new Random();
+        tasks = new TaskList(Storage.loadTasks());
+        ui = new Ui();
+        isExit = false;
     }
 
     /**
@@ -24,115 +44,164 @@ public class Anby {
      * @throws IOException if task data cannot be saved
      */
     public static void main(String[] args) throws IOException {
-        String[] badInputMessages = {
-            "what are ya tryna say?",
-            "burger?",
-            "please speak burger or english only"
-        };
-
-        Random random = new Random();
-        Parser parser = new Parser();
-        Ui ui = new Ui();
-
-        TaskList tasks = new TaskList(Storage.loadTasks());
-
+        Anby anby = new Anby();
         Scanner scanner = new Scanner(System.in);
 
-        ui.showGreeting();
+        System.out.println(anby.getGreeting());
 
-        while (true) {
+        while (!anby.isExit()) {
             String input = scanner.nextLine();
-            String[] parts = parser.splitInput(input);
+            System.out.println(anby.getResponse(input));
+        }
+    }
 
-            try {
-                Command command;
-                try {
-                    command = parser.parseCommand(parts[0]);
-                } catch (IllegalArgumentException e) { // catch illegal or unrecognized command
-                    throw new AnbyException(badInputMessages[random.nextInt(badInputMessages.length)]);
-                }
+    /**
+     * Returns the greeting message.
+     *
+     * @return greeting message
+     */
+    public String getGreeting() {
+        return ui.getGreeting();
+    }
 
-                switch (command) {
-                    case LIST: {
-                        ui.showList(tasks);
-                        break;
-                    }
-                    case MARK: {
-                        String taskNumber = parser.parseTaskNumber(parts, "hey give me a valid task number to mark!");
-                        Task currTask = tasks.getTask(taskNumber);
-                        tasks.mark(taskNumber);
-                        Storage.saveTasks(tasks.getTasks());
-                        ui.showMarked(currTask);
-                        break;
-                    }
-                    case UNMARK: {
-                        String taskNumber = parser.parseTaskNumber(parts, "hey give me a valid task number to unmark!");
-                        Task currTask = tasks.getTask(taskNumber);
-                        tasks.unmark(taskNumber);
-                        Storage.saveTasks(tasks.getTasks());
-                        ui.showUnmarked(currTask);
-                        break;
-                    }
-                    case DELETE: {
-                        String taskNumber = parser.parseTaskNumber(parts, "hey give me a valid task number to delete!");
-                        Task removedTask = tasks.delete(taskNumber);
-                        Storage.saveTasks(tasks.getTasks());
-                        ui.showDeleted(removedTask);
-                        break;
-                    }
-                    case FIND: {
-                        String keyword = parser.parseFind(parts);
-                        TaskList matchingTasks = tasks.find(keyword);
-                        ui.showFindResults(matchingTasks);
-                        break;
-                    }
-                    case BYE: {
-                        ui.showGoodbye();
-                        return;
-                    }
-                    case TODO: {
-                        Todo newTodo = new Todo(parser.parseTodo(parts));
-                        tasks.add(newTodo);
-                        Storage.saveTasks(tasks.getTasks());
-                        ui.showAdded(newTodo, tasks.size());
-                        break;
-                    }
-                    case DEADLINE: {
-                        String[] deadlineParts = parser.parseDeadline(parts);
+    /**
+     * Returns the greeting message to show in the GUI.
+     *
+     * @return GUI greeting message
+     */
+    public String getGuiGreeting() {
+        return "Hey, I'm Anby\nWhat do you need me for? I accept payment only in burgers";
+    }
 
-                        try {
-                            Deadline newDeadline = new Deadline(deadlineParts[0], deadlineParts[1]);
-                            tasks.add(newDeadline);
-                            Storage.saveTasks(tasks.getTasks());
-                            ui.showAdded(newDeadline, tasks.size());
-                        } catch (DateTimeParseException e) {
-                            throw new AnbyException("yo use this date format for the deadline: yyyy-mm-dd");
-                        }
+    /**
+     * Returns whether the user has asked Anby to exit.
+     *
+     * @return true if the current session should exit
+     */
+    public boolean isExit() {
+        return isExit;
+    }
 
-                        break;
-                    }
-                    case EVENT: {
-                        String[] eventParts = parser.parseEvent(parts);
+    /**
+     * Processes one user input and returns Anby's response.
+     *
+     * @param input user input
+     * @return response to show to the user
+     */
+    public String getResponse(String input) {
+        String[] parts = parser.splitInput(input);
 
-                        try {
-                            Event newEvent = new Event(eventParts[0], eventParts[1], eventParts[2]);
-                            tasks.add(newEvent);
-                            Storage.saveTasks(tasks.getTasks());
-                            ui.showAdded(newEvent, tasks.size());
-                        } catch (DateTimeParseException e) {
-                            throw new AnbyException("yo use this date format for the event timings: yyyy-mm-dd");
-                        } catch (IllegalArgumentException e) {
-                            throw new AnbyException("bruh your end date is before the start date");
-                        }
+        try {
+            Command command = parseCommand(parts[0]);
+            return executeCommand(command, parts);
+        } catch (AnbyException e) {
+            return ui.getError(e.getMessage());
+        }
+    }
 
-                        break;
-                    }
-                    default:
-                        throw new AnbyException(badInputMessages[random.nextInt(badInputMessages.length)]);
-                }
-            } catch (AnbyException e) {
-                ui.showError(e.getMessage());
-            }
+    private Command parseCommand(String commandWord) throws AnbyException {
+        try {
+            return parser.parseCommand(commandWord);
+        } catch (IllegalArgumentException e) {
+            throw new AnbyException(BAD_INPUT_MESSAGES[random.nextInt(BAD_INPUT_MESSAGES.length)]);
+        }
+    }
+
+    private String executeCommand(Command command, String[] parts) throws AnbyException {
+        try {
+            return executeCommandWithStorage(command, parts);
+        } catch (IOException e) {
+            throw new AnbyException("uh oh i couldn't save your tasks");
+        }
+    }
+
+    private String executeCommandWithStorage(Command command, String[] parts) throws IOException, AnbyException {
+        switch (command) {
+            case LIST:
+                return ui.getList(tasks);
+            case MARK:
+                return markTask(parts);
+            case UNMARK:
+                return unmarkTask(parts);
+            case DELETE:
+                return deleteTask(parts);
+            case FIND:
+                return findTasks(parts);
+            case BYE:
+                isExit = true;
+                return ui.getGoodbye();
+            case TODO:
+                return addTodo(parts);
+            case DEADLINE:
+                return addDeadline(parts);
+            case EVENT:
+                return addEvent(parts);
+            default:
+                throw new AnbyException(BAD_INPUT_MESSAGES[random.nextInt(BAD_INPUT_MESSAGES.length)]);
+        }
+    }
+
+    private String markTask(String[] parts) throws IOException, AnbyException {
+        String taskNumber = parser.parseTaskNumber(parts, "hey give me a valid task number to mark!");
+        Task currTask = tasks.getTask(taskNumber);
+        tasks.mark(taskNumber);
+        Storage.saveTasks(tasks.getTasks());
+        return ui.getMarked(currTask);
+    }
+
+    private String unmarkTask(String[] parts) throws IOException, AnbyException {
+        String taskNumber = parser.parseTaskNumber(parts, "hey give me a valid task number to unmark!");
+        Task currTask = tasks.getTask(taskNumber);
+        tasks.unmark(taskNumber);
+        Storage.saveTasks(tasks.getTasks());
+        return ui.getUnmarked(currTask);
+    }
+
+    private String deleteTask(String[] parts) throws IOException, AnbyException {
+        String taskNumber = parser.parseTaskNumber(parts, "hey give me a valid task number to delete!");
+        Task removedTask = tasks.delete(taskNumber);
+        Storage.saveTasks(tasks.getTasks());
+        return ui.getDeleted(removedTask);
+    }
+
+    private String findTasks(String[] parts) throws AnbyException {
+        String keyword = parser.parseFind(parts);
+        TaskList matchingTasks = tasks.find(keyword);
+        return ui.getFindResults(matchingTasks);
+    }
+
+    private String addTodo(String[] parts) throws IOException, AnbyException {
+        Todo newTodo = new Todo(parser.parseTodo(parts));
+        tasks.add(newTodo);
+        Storage.saveTasks(tasks.getTasks());
+        return ui.getAdded(newTodo, tasks.size());
+    }
+
+    private String addDeadline(String[] parts) throws IOException, AnbyException {
+        String[] deadlineParts = parser.parseDeadline(parts);
+
+        try {
+            Deadline newDeadline = new Deadline(deadlineParts[0], deadlineParts[1]);
+            tasks.add(newDeadline);
+            Storage.saveTasks(tasks.getTasks());
+            return ui.getAdded(newDeadline, tasks.size());
+        } catch (DateTimeParseException e) {
+            throw new AnbyException("yo use this date format for the deadline: yyyy-mm-dd");
+        }
+    }
+
+    private String addEvent(String[] parts) throws IOException, AnbyException {
+        String[] eventParts = parser.parseEvent(parts);
+
+        try {
+            Event newEvent = new Event(eventParts[0], eventParts[1], eventParts[2]);
+            tasks.add(newEvent);
+            Storage.saveTasks(tasks.getTasks());
+            return ui.getAdded(newEvent, tasks.size());
+        } catch (DateTimeParseException e) {
+            throw new AnbyException("yo use this date format for the event timings: yyyy-mm-dd");
+        } catch (IllegalArgumentException e) {
+            throw new AnbyException("bruh your end date is before the start date");
         }
     }
 }
