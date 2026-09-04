@@ -69,12 +69,14 @@ public class TaskList {
     }
 
     /**
-     * Adds a task to the list.
+     * Adds tasks to the list.
      *
-     * @param task task to add
+     * @param tasks tasks to add
      */
-    public void add(Task task) {
-        this.tasks.add(task);
+    public void add(Task... tasks) {
+        for (Task task : tasks) {
+            this.tasks.add(task);
+        }
     }
 
     /**

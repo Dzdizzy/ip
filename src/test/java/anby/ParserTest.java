@@ -1,9 +1,14 @@
 package anby;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
+
+import anby.task.Todo;
 
 public class ParserTest {
     @Test
@@ -37,5 +42,14 @@ public class ParserTest {
         String[] parts = parser.splitInput("deadline eat burger");
 
         assertThrows(AnbyException.class, () -> parser.parseDeadline(parts));
+    }
+
+    @Test
+    public void add_multipleTasks_addsAllTasks() {
+        TaskList tasks = new TaskList(new ArrayList<>());
+
+        tasks.add(new Todo("eat burger"), new Todo("drink tea"));
+
+        assertEquals(2, tasks.size());
     }
 }
