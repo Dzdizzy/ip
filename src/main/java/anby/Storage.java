@@ -17,6 +17,17 @@ import anby.task.Todo;
  */
 public class Storage {
     private static final String FILE_PATH = "data/anby.txt";
+    private static final String FILE_FIELD_SEPARATOR = " \\| ";
+    private static final String TODO_FILE_SYMBOL = "T";
+    private static final String DEADLINE_FILE_SYMBOL = "D";
+    private static final String EVENT_FILE_SYMBOL = "E";
+    private static final String DONE_STATUS = "1";
+    private static final int TASK_TYPE_INDEX = 0;
+    private static final int DONE_STATUS_INDEX = 1;
+    private static final int DESCRIPTION_INDEX = 2;
+    private static final int DEADLINE_DATE_INDEX = 3;
+    private static final int EVENT_FROM_INDEX = 3;
+    private static final int EVENT_TO_INDEX = 4;
 
     private Storage() {
     }
@@ -34,15 +45,12 @@ public class Storage {
             return tasks;
         }
 
-        try {
-            Scanner scanner = new Scanner(file);
-
+        try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 Task task = parseTask(line);
                 tasks.add(task);
             }
-            scanner.close();
         } catch (FileNotFoundException e) {
             return tasks;
         }
@@ -51,34 +59,38 @@ public class Storage {
     }
 
     private static Task parseTask(String line) {
-        String[] parts = line.split(" \\| ");
+        String[] parts = line.split(FILE_FIELD_SEPARATOR);
         assert parts.length >= 3 : "Saved task line should contain type, done status, and description";
 
         Task task;
 
-        switch (parts[0]) {
-            case "T":
+        switch (parts[TASK_TYPE_INDEX]) {
+            case TODO_FILE_SYMBOL:
                 assert parts.length == 3;
-                task = new Todo(parts[2]);
+                task = new Todo(parts[DESCRIPTION_INDEX]);
                 break;
-            case "D":
+            case DEADLINE_FILE_SYMBOL:
                 assert parts.length == 4;
-                task = new Deadline(parts[2], parts[3]);
+                task = new Deadline(parts[DESCRIPTION_INDEX], parts[DEADLINE_DATE_INDEX]);
                 break;
-            case "E":
+            case EVENT_FILE_SYMBOL:
                 assert parts.length == 5;
-                task = new Event(parts[2], parts[3], parts[4]);
+                task = new Event(parts[DESCRIPTION_INDEX], parts[EVENT_FROM_INDEX], parts[EVENT_TO_INDEX]);
                 break;
             default:
-                assert false : "Unknown saved task type: " + parts[0];
-                throw new IllegalArgumentException("Unknown task type: " + parts[0]);
+                assert false : "Unknown saved task type: " + parts[TASK_TYPE_INDEX];
+                throw new IllegalArgumentException("Unknown task type: " + parts[TASK_TYPE_INDEX]);
         }
 
-        if (parts[1].equals("1")) {
+        if (isDone(parts)) {
             task.markAsDone();
         }
 
         return task;
+    }
+
+    private static boolean isDone(String[] parts) {
+        return parts[DONE_STATUS_INDEX].equals(DONE_STATUS);
     }
 
     /**
@@ -91,12 +103,10 @@ public class Storage {
         File file = new File(FILE_PATH);
         file.getParentFile().mkdirs();
 
-        FileWriter fileWriter = new FileWriter(file);
-
-        for (int i = 0; i < tasks.size(); i++) {
-            fileWriter.write(tasks.get(i).toFileString() + System.lineSeparator());
+        try (FileWriter fileWriter = new FileWriter(file)) {
+            for (int i = 0; i < tasks.size(); i++) {
+                fileWriter.write(tasks.get(i).toFileString() + System.lineSeparator());
+            }
         }
-
-        fileWriter.close();
     }
 }

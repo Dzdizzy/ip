@@ -4,6 +4,15 @@ package anby;
  * Parses user input into commands and command arguments.
  */
 public class Parser {
+    private static final String COMMAND_SEPARATOR = " ";
+    private static final int COMMAND_PART_LIMIT = 2;
+    private static final int ARGUMENT_INDEX = 1;
+    private static final int FIRST_PART_INDEX = 0;
+    private static final int EXPECTED_PART_COUNT = 2;
+    private static final String DEADLINE_SEPARATOR = "/by";
+    private static final String EVENT_START_SEPARATOR = "/from";
+    private static final String EVENT_END_SEPARATOR = "/to";
+
     /**
      * Creates a parser.
      */
@@ -17,7 +26,7 @@ public class Parser {
      * @return array containing the command word and, if present, the remaining arguments
      */
     public String[] splitInput(String input) {
-        return input.split(" ", 2);
+        return input.split(COMMAND_SEPARATOR, COMMAND_PART_LIMIT);
     }
 
     /**
@@ -31,6 +40,14 @@ public class Parser {
         return Command.valueOf(commandWord.toUpperCase());
     }
 
+    private boolean hasNoArguments(String[] parts) {
+        return parts.length <= ARGUMENT_INDEX;
+    }
+
+    private String getArguments(String[] parts) {
+        return parts[ARGUMENT_INDEX];
+    }
+
     /**
      * Returns the task number argument from a command.
      *
@@ -40,11 +57,11 @@ public class Parser {
      * @throws AnbyException if the task number is missing
      */
     public String parseTaskNumber(String[] parts, String errorMessage) throws AnbyException {
-        if (parts.length < 2) {
+        if (hasNoArguments(parts)) {
             throw new AnbyException(errorMessage);
         }
 
-        return parts[1];
+        return getArguments(parts);
     }
 
     /**
@@ -55,11 +72,11 @@ public class Parser {
      * @throws AnbyException if the keyword is missing
      */
     public String parseFind(String[] parts) throws AnbyException {
-        if (parts.length == 1 || parts[1].trim().isEmpty()) {
+        if (hasNoArguments(parts) || getArguments(parts).trim().isEmpty()) {
             throw new AnbyException("hey you didnt put in anything to find");
         }
 
-        return parts[1].trim();
+        return getArguments(parts).trim();
     }
 
     /**
@@ -70,11 +87,11 @@ public class Parser {
      * @throws AnbyException if the description is missing
      */
     public String parseTodo(String[] parts) throws AnbyException {
-        if (parts.length == 1 || parts[1].trim().isEmpty()) {
+        if (hasNoArguments(parts) || getArguments(parts).trim().isEmpty()) {
             throw new AnbyException("hey you forgot to put a todo haha");
         }
 
-        return parts[1].trim();
+        return getArguments(parts).trim();
     }
 
     /**
@@ -85,13 +102,13 @@ public class Parser {
      * @throws AnbyException if the description or due date is missing
      */
     public String[] parseDeadline(String[] parts) throws AnbyException {
-        if (parts.length == 1) {
+        if (hasNoArguments(parts)) {
             throw new AnbyException("hey you forgot to put a deadline task haha");
         }
 
-        String[] deadlineParts = parts[1].split("/by", 2);
+        String[] deadlineParts = getArguments(parts).split(DEADLINE_SEPARATOR, COMMAND_PART_LIMIT);
 
-        if (deadlineParts.length != 2) {
+        if (deadlineParts.length != EXPECTED_PART_COUNT) {
             throw new AnbyException("hey you forgot to put a deadline on the task\n(do deadline /by [time])");
         }
 
@@ -109,26 +126,26 @@ public class Parser {
      * @throws AnbyException if the description, start date, or end date is missing
      */
     public String[] parseEvent(String[] parts) throws AnbyException {
-        if (parts.length == 1) {
+        if (hasNoArguments(parts)) {
             throw new AnbyException("hey you forgot to put an event haha");
         }
 
-        String[] eventParts = parts[1].split("/from", 2);
+        String[] eventParts = getArguments(parts).split(EVENT_START_SEPARATOR, COMMAND_PART_LIMIT);
 
-        if (eventParts.length != 2) {
+        if (eventParts.length != EXPECTED_PART_COUNT) {
             throw new AnbyException("hey you forgot to put a start time\n(do event /from [time] /to [time])");
         }
 
-        String[] timeParts = eventParts[1].split("/to", 2);
+        String[] timeParts = eventParts[ARGUMENT_INDEX].split(EVENT_END_SEPARATOR, COMMAND_PART_LIMIT);
 
-        if (timeParts.length != 2) {
+        if (timeParts.length != EXPECTED_PART_COUNT) {
             throw new AnbyException("hey you forgot to put an end time\n(do event /from [time] /to [time])");
         }
 
         return new String[] {
-                eventParts[0].trim(),
-                timeParts[0].trim(),
-                timeParts[1].trim()
+                eventParts[FIRST_PART_INDEX].trim(),
+                timeParts[FIRST_PART_INDEX].trim(),
+                timeParts[ARGUMENT_INDEX].trim()
         };
     }
 }
