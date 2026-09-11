@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import anby.task.Deadline;
 import anby.task.Event;
@@ -104,8 +105,13 @@ public class Storage {
         file.getParentFile().mkdirs();
 
         try (FileWriter fileWriter = new FileWriter(file)) {
-            for (int i = 0; i < tasks.size(); i++) {
-                fileWriter.write(tasks.get(i).toFileString() + System.lineSeparator());
+            String fileContent = tasks.stream()
+                    .map(Task::toFileString)
+                    .collect(Collectors.joining(System.lineSeparator()));
+
+            fileWriter.write(fileContent);
+            if (!fileContent.isEmpty()) {
+                fileWriter.write(System.lineSeparator());
             }
         }
     }

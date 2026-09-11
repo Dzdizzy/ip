@@ -1,6 +1,7 @@
 package anby;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import anby.task.Task;
 
@@ -139,15 +140,12 @@ public class TaskList {
      */
     public TaskList find(String keyword) {
         assert keyword != null;
-
-        ArrayList<Task> matchingTasks = new ArrayList<>();
-
-        for (int i = 0; i < this.tasks.size(); i++) {
-            if (this.tasks.get(i).getName().toUpperCase().contains(keyword.toUpperCase())) {
-                matchingTasks.add(this.tasks.get(i));
-            }
-        }
-
+      
+        String keywordInUpperCase = keyword.toUpperCase();
+        ArrayList<Task> matchingTasks = this.tasks.stream()
+                .filter(task -> task.getName().toUpperCase().contains(keywordInUpperCase))
+                .collect(Collectors.toCollection(ArrayList::new));
+      
         return new TaskList(matchingTasks);
     }
 
