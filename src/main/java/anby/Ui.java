@@ -70,19 +70,10 @@ public class Ui {
      * @return task list message
      */
     public String getList(TaskList tasks) {
-        StringBuilder message = new StringBuilder();
-
-        if (tasks.isEmpty()) {
-            message.append("lol you have no tasks!\n");
-        } else {
-            message.append("finish these and then reward me with burgers:\n");
-        }
-
-        for (int i = 0; i < tasks.size(); i++) {
-            message.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
-        }
-
-        return message.toString();
+        return formatTaskList(
+                tasks,
+                "lol you have no tasks!\n",
+                "finish these and then reward me with burgers:\n");
     }
 
     /**
@@ -180,16 +171,23 @@ public class Ui {
      * @return find results message
      */
     public String getFindResults(TaskList matchingTasks) {
+        return formatTaskList(
+                matchingTasks,
+                "oopsie i cant find anything\n",
+                "heres what i found:\n");
+    }
+
+    private String formatTaskList(TaskList tasks, String emptyMessage, String headerMessage) {
         StringBuilder message = new StringBuilder();
 
-        if (matchingTasks.isEmpty()) {
-            message.append("oopsie i cant find anything\n");
+        if (tasks.isEmpty()) {
+            message.append(emptyMessage);
         } else {
-            message.append("heres what i found:\n");
+            message.append(headerMessage);
         }
 
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            message.append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            message.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
 
         return message.toString();
