@@ -35,6 +35,11 @@ public class Anby {
         tasks = new TaskList(Storage.loadTasks());
         ui = new Ui();
         isExit = false;
+
+        assert parser != null;
+        assert random != null;
+        assert tasks != null;
+        assert ui != null;
     }
 
     /**
@@ -90,9 +95,11 @@ public class Anby {
      */
     public String getResponse(String input) {
         String[] parts = parser.splitInput(input);
+        assert parts.length >= 1 : "Split input should always include the command word";
 
         try {
             Command command = parseCommand(parts[0]);
+            assert command != null;
             return executeCommand(command, parts);
         } catch (AnbyException e) {
             return ui.getError(e.getMessage());
@@ -108,6 +115,9 @@ public class Anby {
     }
 
     private String executeCommand(Command command, String[] parts) throws AnbyException {
+        assert command != null;
+        assert parts != null;
+
         try {
             return executeCommandWithStorage(command, parts);
         } catch (IOException e) {
@@ -116,6 +126,9 @@ public class Anby {
     }
 
     private String executeCommandWithStorage(Command command, String[] parts) throws IOException, AnbyException {
+        assert command != null;
+        assert parts != null;
+
         switch (command) {
             case LIST:
                 return ui.getList(tasks);
@@ -137,6 +150,7 @@ public class Anby {
             case EVENT:
                 return addEvent(parts);
             default:
+                assert false : "Unexpected command: " + command;
                 throw new AnbyException(BAD_INPUT_MESSAGES[random.nextInt(BAD_INPUT_MESSAGES.length)]);
         }
     }
@@ -166,6 +180,7 @@ public class Anby {
 
     private String findTasks(String[] parts) throws AnbyException {
         String keyword = parser.parseFind(parts);
+        assert !keyword.isEmpty();
         TaskList matchingTasks = tasks.find(keyword);
         return ui.getFindResults(matchingTasks);
     }
@@ -179,6 +194,7 @@ public class Anby {
 
     private String addDeadline(String[] parts) throws IOException, AnbyException {
         String[] deadlineParts = parser.parseDeadline(parts);
+        assert deadlineParts.length == 2;
 
         try {
             Deadline newDeadline = new Deadline(deadlineParts[0], deadlineParts[1]);
@@ -192,6 +208,7 @@ public class Anby {
 
     private String addEvent(String[] parts) throws IOException, AnbyException {
         String[] eventParts = parser.parseEvent(parts);
+        assert eventParts.length == 3;
 
         try {
             Event newEvent = new Event(eventParts[0], eventParts[1], eventParts[2]);
