@@ -60,19 +60,25 @@ public class Storage {
 
     private static Task parseTask(String line) {
         String[] parts = line.split(FILE_FIELD_SEPARATOR);
+        assert parts.length >= 3 : "Saved task line should contain type, done status, and description";
+
         Task task;
 
         switch (parts[TASK_TYPE_INDEX]) {
             case TODO_FILE_SYMBOL:
+                assert parts.length == 3;
                 task = new Todo(parts[DESCRIPTION_INDEX]);
                 break;
             case DEADLINE_FILE_SYMBOL:
+                assert parts.length == 4;
                 task = new Deadline(parts[DESCRIPTION_INDEX], parts[DEADLINE_DATE_INDEX]);
                 break;
             case EVENT_FILE_SYMBOL:
+                assert parts.length == 5;
                 task = new Event(parts[DESCRIPTION_INDEX], parts[EVENT_FROM_INDEX], parts[EVENT_TO_INDEX]);
                 break;
             default:
+                assert false : "Unknown saved task type: " + parts[TASK_TYPE_INDEX];
                 throw new IllegalArgumentException("Unknown task type: " + parts[TASK_TYPE_INDEX]);
         }
 
