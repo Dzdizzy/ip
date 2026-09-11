@@ -1,7 +1,5 @@
 package anby;
 
-import java.util.Map;
-
 /**
  * Parses user input into commands and command arguments.
  */
@@ -14,17 +12,6 @@ public class Parser {
     private static final String DEADLINE_SEPARATOR = "/by";
     private static final String EVENT_START_SEPARATOR = "/from";
     private static final String EVENT_END_SEPARATOR = "/to";
-    private static final Map<String, Command> COMMAND_ALIASES = Map.of(
-            "ls", Command.LIST,
-            "m", Command.MARK,
-            "um", Command.UNMARK,
-            "del", Command.DELETE,
-            "q", Command.BYE,
-            "t", Command.TODO,
-            "d", Command.DEADLINE,
-            "e", Command.EVENT,
-            "f", Command.FIND
-    );
 
     /**
      * Creates a parser.
@@ -51,12 +38,38 @@ public class Parser {
      */
     public Command parseCommand(String commandWord) {
         String normalizedCommandWord = commandWord.toLowerCase();
+        Command aliasCommand = parseAlias(normalizedCommandWord);
 
-        if (COMMAND_ALIASES.containsKey(normalizedCommandWord)) {
-            return COMMAND_ALIASES.get(normalizedCommandWord);
+        if (aliasCommand != null) {
+            return aliasCommand;
         }
 
         return Command.valueOf(normalizedCommandWord.toUpperCase());
+    }
+
+    private Command parseAlias(String commandWord) {
+        switch (commandWord) {
+            case "ls":
+                return Command.LIST;
+            case "m":
+                return Command.MARK;
+            case "um":
+                return Command.UNMARK;
+            case "del":
+                return Command.DELETE;
+            case "q":
+                return Command.BYE;
+            case "t":
+                return Command.TODO;
+            case "d":
+                return Command.DEADLINE;
+            case "e":
+                return Command.EVENT;
+            case "f":
+                return Command.FIND;
+            default:
+                return null;
+        }
     }
 
     private boolean hasNoArguments(String[] parts) {
