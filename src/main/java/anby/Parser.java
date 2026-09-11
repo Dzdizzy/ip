@@ -1,5 +1,7 @@
 package anby;
 
+import java.util.Map;
+
 /**
  * Parses user input into commands and command arguments.
  */
@@ -12,6 +14,17 @@ public class Parser {
     private static final String DEADLINE_SEPARATOR = "/by";
     private static final String EVENT_START_SEPARATOR = "/from";
     private static final String EVENT_END_SEPARATOR = "/to";
+    private static final Map<String, Command> COMMAND_ALIASES = Map.of(
+            "ls", Command.LIST,
+            "m", Command.MARK,
+            "um", Command.UNMARK,
+            "del", Command.DELETE,
+            "q", Command.BYE,
+            "t", Command.TODO,
+            "d", Command.DEADLINE,
+            "e", Command.EVENT,
+            "f", Command.FIND
+    );
 
     /**
      * Creates a parser.
@@ -37,7 +50,13 @@ public class Parser {
      * @throws IllegalArgumentException if the command word is not recognised
      */
     public Command parseCommand(String commandWord) {
-        return Command.valueOf(commandWord.toUpperCase());
+        String normalizedCommandWord = commandWord.toLowerCase();
+
+        if (COMMAND_ALIASES.containsKey(normalizedCommandWord)) {
+            return COMMAND_ALIASES.get(normalizedCommandWord);
+        }
+
+        return Command.valueOf(normalizedCommandWord.toUpperCase());
     }
 
     private boolean hasNoArguments(String[] parts) {
