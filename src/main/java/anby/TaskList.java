@@ -18,6 +18,7 @@ public class TaskList {
      */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
+        assert this.tasks != null;
     }
 
     /**
@@ -66,7 +67,9 @@ public class TaskList {
      */
     public Task getTask(String taskNumber) throws AnbyException {
         int index = parseTaskIndex(taskNumber);
-        return this.tasks.get(index);
+        Task task = this.tasks.get(index);
+        assert task != null;
+        return task;
     }
 
     /**
@@ -75,7 +78,10 @@ public class TaskList {
      * @param tasks tasks to add
      */
     public void add(Task... tasks) {
+        assert tasks != null;
+
         for (Task task : tasks) {
+            assert task != null;
             this.tasks.add(task);
         }
     }
@@ -89,7 +95,9 @@ public class TaskList {
      */
     public Task delete(String taskNumber) throws AnbyException {
         int index = parseTaskIndex(taskNumber);
-        return this.tasks.remove(index);
+        Task removedTask = this.tasks.remove(index);
+        assert removedTask != null;
+        return removedTask;
     }
 
     /**
@@ -131,11 +139,13 @@ public class TaskList {
      * @return task list containing matching tasks
      */
     public TaskList find(String keyword) {
+        assert keyword != null;
+      
         String keywordInUpperCase = keyword.toUpperCase();
         ArrayList<Task> matchingTasks = this.tasks.stream()
                 .filter(task -> task.getName().toUpperCase().contains(keywordInUpperCase))
                 .collect(Collectors.toCollection(ArrayList::new));
-
+      
         return new TaskList(matchingTasks);
     }
 
@@ -147,7 +157,9 @@ public class TaskList {
                 throw new AnbyException("hey give me a valid task number!");
             }
 
-            return taskNumber - 1;
+            int index = taskNumber - 1;
+            assert index >= 0 && index < this.tasks.size();
+            return index;
         } catch (NumberFormatException e) {
             throw new AnbyException("hey give me a valid task number!");
         }
