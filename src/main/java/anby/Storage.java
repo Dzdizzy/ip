@@ -52,19 +52,25 @@ public class Storage {
 
     private static Task parseTask(String line) {
         String[] parts = line.split(" \\| ");
+        assert parts.length >= 3 : "Saved task line should contain type, done status, and description";
+
         Task task;
 
         switch (parts[0]) {
             case "T":
+                assert parts.length == 3;
                 task = new Todo(parts[2]);
                 break;
             case "D":
+                assert parts.length == 4;
                 task = new Deadline(parts[2], parts[3]);
                 break;
             case "E":
+                assert parts.length == 5;
                 task = new Event(parts[2], parts[3], parts[4]);
                 break;
             default:
+                assert false : "Unknown saved task type: " + parts[0];
                 throw new IllegalArgumentException("Unknown task type: " + parts[0]);
         }
 
