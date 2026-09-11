@@ -140,12 +140,12 @@ public class TaskList {
      */
     public TaskList find(String keyword) {
         assert keyword != null;
-      
+
         String keywordInUpperCase = keyword.toUpperCase();
         ArrayList<Task> matchingTasks = this.tasks.stream()
                 .filter(task -> task.getName().toUpperCase().contains(keywordInUpperCase))
                 .collect(Collectors.toCollection(ArrayList::new));
-      
+
         return new TaskList(matchingTasks);
     }
 
