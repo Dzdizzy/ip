@@ -75,7 +75,7 @@ public class Anby {
      * @return GUI greeting message
      */
     public String getGuiGreeting() {
-        return "Hey, I'm Anby\nWhat do you need me for? I accept payment only in burgers";
+        return ui.getIntro();
     }
 
     /**
@@ -141,6 +141,8 @@ public class Anby {
                 return deleteTask(parts);
             case FIND:
                 return findTasks(parts);
+            case BURGER:
+                return ui.getRandomQuote(random);
             case BYE:
                 isExit = true;
                 return ui.getGoodbye();

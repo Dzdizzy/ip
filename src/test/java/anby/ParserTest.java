@@ -16,6 +16,7 @@ public class ParserTest {
         Parser parser = new Parser();
 
         assertEquals(Command.TODO, parser.parseCommand("todo"));
+        assertEquals(Command.BURGER, parser.parseCommand("burger"));
     }
 
     @Test
