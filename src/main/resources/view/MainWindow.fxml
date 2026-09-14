@@ -13,10 +13,10 @@
   <children>
     <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" hvalue="0.0"
                 prefHeight="557.0" prefWidth="400.0" vbarPolicy="ALWAYS"
-                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                AnchorPane.topAnchor="0.0">
+                AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <content>
-        <VBox fx:id="dialogContainer" prefHeight="557.0" prefWidth="388.0" />
+        <VBox fx:id="dialogContainer" prefWidth="388.0" />
       </content>
     </ScrollPane>
     <TextField fx:id="userInput" onAction="#handleUserInput" prefHeight="43.0"
