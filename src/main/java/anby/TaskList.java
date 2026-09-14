@@ -110,7 +110,8 @@ public class TaskList {
         Task task = getTask(taskNumber);
 
         if (task.isDone()) {
-            throw new AnbyException("you're actually already done with this task lol");
+            throw new AnbyException("you're actually already done with this task lol\n"
+                    + "try: list to pick another task");
         }
 
         task.markAsDone();
@@ -126,7 +127,8 @@ public class TaskList {
         Task task = getTask(taskNumber);
 
         if (!task.isDone()) {
-            throw new AnbyException("bruh you haven't done this yet anyway");
+            throw new AnbyException("bruh you haven't done this yet anyway\n"
+                    + "try: mark 1 before unmarking that task");
         }
 
         task.unmarkAsDone();
@@ -154,14 +156,16 @@ public class TaskList {
             int taskNumber = Integer.parseInt(text);
 
             if (taskNumber < 1 || taskNumber > this.tasks.size()) {
-                throw new AnbyException("hey give me a valid task number!");
+                throw new AnbyException("hey give me a valid task number!\n"
+                        + "try: list to pick a task number");
             }
 
             int index = taskNumber - 1;
             assert index >= 0 && index < this.tasks.size();
             return index;
         } catch (NumberFormatException e) {
-            throw new AnbyException("hey give me a valid task number!");
+            throw new AnbyException("hey give me a valid task number!\n"
+                    + "try: list to pick a task number");
         }
     }
 }

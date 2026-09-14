@@ -15,9 +15,9 @@ import anby.task.Todo;
  */
 public class Anby {
     private static final String[] BAD_INPUT_MESSAGES = {
-        "what are ya tryna say?",
-        "burger?",
-        "please speak burger or english only"
+        "what are ya tryna say?\ntry: todo buy burgers",
+        "burger?\ntry: list to check your tasks",
+        "please speak burger or commands only\ntry: deadline buy burgers /by 2026-09-18"
     };
 
     private final Parser parser;
@@ -75,7 +75,7 @@ public class Anby {
      * @return GUI greeting message
      */
     public String getGuiGreeting() {
-        return "Hey, I'm Anby\nWhat do you need me for? I accept payment only in burgers";
+        return ui.getIntro();
     }
 
     /**
@@ -121,7 +121,8 @@ public class Anby {
         try {
             return executeCommandWithStorage(command, parts);
         } catch (IOException e) {
-            throw new AnbyException("uh oh i couldn't save your tasks");
+            throw new AnbyException("uh oh i couldn't save your tasks\n"
+                    + "try: list to check your current tasks");
         }
     }
 
@@ -140,6 +141,8 @@ public class Anby {
                 return deleteTask(parts);
             case FIND:
                 return findTasks(parts);
+            case BURGER:
+                return ui.getRandomQuote(random);
             case BYE:
                 isExit = true;
                 return ui.getGoodbye();
@@ -156,7 +159,8 @@ public class Anby {
     }
 
     private String markTask(String[] parts) throws IOException, AnbyException {
-        String taskNumber = parser.parseTaskNumber(parts, "hey give me a valid task number to mark!");
+        String taskNumber = parser.parseTaskNumber(parts, "mark which one? put the fries in the bag fam\n"
+                + "try: mark 1");
         Task currTask = tasks.getTask(taskNumber);
         tasks.mark(taskNumber);
         Storage.saveTasks(tasks.getTasks());
@@ -164,7 +168,8 @@ public class Anby {
     }
 
     private String unmarkTask(String[] parts) throws IOException, AnbyException {
-        String taskNumber = parser.parseTaskNumber(parts, "hey give me a valid task number to unmark!");
+        String taskNumber = parser.parseTaskNumber(parts, "unmark what? im gonna borrow a fry from you for that\n"
+                + "try: unmark 1");
         Task currTask = tasks.getTask(taskNumber);
         tasks.unmark(taskNumber);
         Storage.saveTasks(tasks.getTasks());
@@ -172,7 +177,8 @@ public class Anby {
     }
 
     private String deleteTask(String[] parts) throws IOException, AnbyException {
-        String taskNumber = parser.parseTaskNumber(parts, "hey give me a valid task number to delete!");
+        String taskNumber = parser.parseTaskNumber(parts, "which task do i delete? be a bum properly\n"
+                + "try: delete 1 from your task list");
         Task removedTask = tasks.delete(taskNumber);
         Storage.saveTasks(tasks.getTasks());
         return ui.getDeleted(removedTask);
@@ -202,7 +208,8 @@ public class Anby {
             Storage.saveTasks(tasks.getTasks());
             return ui.getAdded(newDeadline, tasks.size());
         } catch (DateTimeParseException e) {
-            throw new AnbyException("yo use this date format for the deadline: yyyy-mm-dd");
+            throw new AnbyException("my calendar only reads this format for deadlines: yyyy-mm-dd\n"
+                    + "try: deadline buy burgers /by 2026-09-18");
         }
     }
 
@@ -216,9 +223,11 @@ public class Anby {
             Storage.saveTasks(tasks.getTasks());
             return ui.getAdded(newEvent, tasks.size());
         } catch (DateTimeParseException e) {
-            throw new AnbyException("yo use this date format for the event timings: yyyy-mm-dd");
+            throw new AnbyException("chef pls use this format for event timings: yyyy-mm-dd\n"
+                    + "try: event pick the pickles out /from 2026-09-14 /to 2026-09-18");
         } catch (IllegalArgumentException e) {
-            throw new AnbyException("bruh your end date is before the start date");
+            throw new AnbyException("hey are you tryna warp through time? i dont have a time machine\n"
+                    + "try: event fry fries /from 2026-09-14 /to 2026-09-18");
         }
     }
 }

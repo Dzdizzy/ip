@@ -105,7 +105,7 @@ public class Parser {
      */
     public String parseFind(String[] parts) throws AnbyException {
         if (hasNoArguments(parts) || getArguments(parts).trim().isEmpty()) {
-            throw new AnbyException("hey you didnt put in anything to find");
+            throw new AnbyException("what am i supposed to find but burgers?\ntry: find burger");
         }
 
         return getArguments(parts).trim();
@@ -120,7 +120,7 @@ public class Parser {
      */
     public String parseTodo(String[] parts) throws AnbyException {
         if (hasNoArguments(parts) || getArguments(parts).trim().isEmpty()) {
-            throw new AnbyException("hey you forgot to put a todo haha");
+            throw new AnbyException("hey put a todo down dont be lazy\ntry: todo buy burgers");
         }
 
         return getArguments(parts).trim();
@@ -135,13 +135,15 @@ public class Parser {
      */
     public String[] parseDeadline(String[] parts) throws AnbyException {
         if (hasNoArguments(parts)) {
-            throw new AnbyException("hey you forgot to put a deadline task haha");
+            throw new AnbyException("whats the deadline? is it before dinner?\n"
+                    + "try: deadline eat burgers /by 2026-09-18");
         }
 
         String[] deadlineParts = getArguments(parts).split(DEADLINE_SEPARATOR, COMMAND_PART_LIMIT);
 
         if (deadlineParts.length != EXPECTED_PART_COUNT) {
-            throw new AnbyException("hey you forgot to put a deadline on the task\n(do deadline /by [time])");
+            throw new AnbyException("whats the deadline? is it before dinner?\n"
+                    + "try: deadline cook burgers /by 2026-09-18");
         }
 
         return new String[] {
@@ -159,19 +161,22 @@ public class Parser {
      */
     public String[] parseEvent(String[] parts) throws AnbyException {
         if (hasNoArguments(parts)) {
-            throw new AnbyException("hey you forgot to put an event haha");
+            throw new AnbyException("what event is it? count me in if its lunch\n"
+                    + "try: event burger run /from 2026-09-14 /to 2026-09-18");
         }
 
         String[] eventParts = getArguments(parts).split(EVENT_START_SEPARATOR, COMMAND_PART_LIMIT);
 
         if (eventParts.length != EXPECTED_PART_COUNT) {
-            throw new AnbyException("hey you forgot to put a start time\n(do event /from [time] /to [time])");
+            throw new AnbyException("when does the event start?\n"
+                    + "try: event fast food haul /from 2026-09-14 /to 2026-09-18");
         }
 
         String[] timeParts = eventParts[ARGUMENT_INDEX].split(EVENT_END_SEPARATOR, COMMAND_PART_LIMIT);
 
         if (timeParts.length != EXPECTED_PART_COUNT) {
-            throw new AnbyException("hey you forgot to put an end time\n(do event /from [time] /to [time])");
+            throw new AnbyException("hmm an event has to end even if it concerns burgers...\n"
+                    + "try: event post food nap /from 2026-09-14 /to 2026-09-18");
         }
 
         return new String[] {

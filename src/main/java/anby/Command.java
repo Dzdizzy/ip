@@ -21,5 +21,7 @@ public enum Command {
     /** Adds an event task. */
     EVENT,
     /** Finds and shows tasks that contains the searched keyword. */
-    FIND
+    FIND,
+    /** Shows a random quote. */
+    BURGER
 }
