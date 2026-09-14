@@ -70,10 +70,16 @@ public class Ui {
      * @return task list message
      */
     public String getList(TaskList tasks) {
-        return formatTaskList(
+        String message = formatTaskList(
                 tasks,
                 "lol you have no tasks!\n",
                 "finish these and then reward me with burgers:\n");
+
+        if (tasks.isEmpty()) {
+            return message;
+        }
+
+        return message + "\n" + getTaskCountReaction(tasks.size()) + "\n";
     }
 
     /**
@@ -161,7 +167,8 @@ public class Ui {
      */
     public String getAdded(Task task, int taskCount) {
         return "okay, this is a new task: \n" + task
-                + "\nyou've got " + taskCount + " task(s) waiting for you...";
+                + "\nyou've got " + taskCount + " task(s) waiting for you..."
+                + "\n\n" + getTaskCountReaction(taskCount);
     }
 
     /**
@@ -173,7 +180,7 @@ public class Ui {
     public String getFindResults(TaskList matchingTasks) {
         return formatTaskList(
                 matchingTasks,
-                "oopsie i cant find anything\n",
+                "i dug up all the nearest burger chains and found nothing oopsie\n try a smaller keyword maybe",
                 "heres what i found:\n");
     }
 
@@ -191,6 +198,18 @@ public class Ui {
         }
 
         return message.toString();
+    }
+
+    private String getTaskCountReaction(int taskCount) {
+        if (taskCount == 1) {
+            return "just one item, light snack.";
+        } else if (taskCount <= 3) {
+            return "manageable combo meal, chef.";
+        } else if (taskCount <= 5) {
+            return "okay now the tray is getting heavy.";
+        } else {
+            return "bro this is a full family feast.";
+        }
     }
 
     /**
